@@ -32,7 +32,8 @@ $customerEmail = 'end-customer@email.cm';
 
 // Now verify the status
 $transactionNumber = $payment['ptn'];
-$verify = $cashOut->check($transactionNumber);
+$checkPayment = new \CamooPay\Lib\CheckPayment('token', 'secret');
+$verify = $checkPayment->check($transactionNumber);
 var_dump($verify);
 
 

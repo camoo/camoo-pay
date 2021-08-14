@@ -33,10 +33,4 @@ class CashoutApi
     {
         return $this->client->post('/collectstd', $payload)->getResult();
     }
-
-    public function verify(string $transactionNumber) : ResponseInterface
-    {
-        return $this->client->get('/verifytx', ['ptn' => $transactionNumber])->getResult();
-    }
-
 }

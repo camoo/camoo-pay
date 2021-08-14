@@ -77,10 +77,4 @@ class CashOut
         }
         return null;
     }
-
-    public function check(string $transactionNumber): ?array
-    {
-        $result = $this->cashoutApi->verify($transactionNumber);
-        return $result->get(0);
-    }
 }
