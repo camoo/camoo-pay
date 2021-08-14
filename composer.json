@@ -1,0 +1,38 @@
+{
+    "name": "camoo/camoo-pay",
+    "description": "CamooPay plugin for mobile Money aggregation",
+    "type": "camoo-plugin",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "homepage": "https://camoo.cm",
+    "prefer-stable" : true,
+    "authors": [
+        {
+            "name": "CAMOO SARL",
+            "email": "camoopay@camoo.sarl"
+        }
+    ],
+    "keywords" : [
+        "CAMOO",
+        "Orange Mobile Money",
+        "Mobile money Gateway Cameroon",
+        "Plugin camoo Pay",
+        "MTN Mobile Money"
+    ],
+    "require": {
+        "maviance/smobilpay-php": "^0.0.6",
+        "cakephp/validation": "^4.2",
+        "giggsey/libphonenumber-for-php": "^8.12"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "CamooPay\\": "src"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/camoo/camoo-pay/issues",
+        "source": "https://github.com/camoo/camoo-pay",
+        "wiki": "https://github.com/camoo/camoo-pay/wiki"
+    }
+}
