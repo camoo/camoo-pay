@@ -1,4 +1,4 @@
-#Get the current payment collection status
+# Get the current payment collection status
 Call this endpoint to retrieve the current payment status by either transaction number (PTN) or the custom transaction reference (TRID) that was provided during payment collection. At least one of these parameters has to be provided!
 
 # Usage
