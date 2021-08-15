@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace CamooPay\Jobs;
 
 use Maviance\S3PApiClient\Model\Quote;
-use CamooPay\Services\CashoutApi;
+use CamooPay\Services\Cashout\CashoutApi;
 use CamooPay\Services\CamooPayServiceLocatorTrait;
 use Throwable;
 

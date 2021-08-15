@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace CamooPay\Lib;
 
 use CamooPay\Services\CamooPayServiceLocatorTrait;
-use CamooPay\Services\VerifyApi;
+use CamooPay\Services\Verify\VerifyApi;
 
 class CheckPayment
 {

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace CamooPay\Jobs;
 
-use CamooPay\Services\CashoutApi;
 use CamooPay\Services\CamooPayServiceLocatorTrait;
+use CamooPay\Services\Verify\VerifyApi;
 
 /**
  * This class is not completed. Status Handling should be done in the Backend according to the App Structure.
@@ -15,7 +15,7 @@ final class CashoutVerifyJob
 {
     use CamooPayServiceLocatorTrait;
 
-    private CashoutApi $cashoutApi;
+    private VerifyApi $verifyApi;
     private const SERVICE_NAME = 'Cashout';
     private const MODEL_NAME = 'object';
 
@@ -39,12 +39,12 @@ final class CashoutVerifyJob
 
     public function __construct(string $token, string $secret)
     {
-        $this->cashoutApi = $this->getCamooPayLocator()->get(self::SERVICE_NAME, $token, $secret, self::MODEL_NAME);
+        $this->verifyApi = $this->getCamooPayLocator()->get(self::SERVICE_NAME, $token, $secret, self::MODEL_NAME);
     }
 
     public function handle(string $transactionNumber): ?array
     {
-        $result = $this->cashoutApi->verify($transactionNumber);
+        $result = $this->verifyApi->verify($transactionNumber);
         return $result->get(0);
     }
 }
