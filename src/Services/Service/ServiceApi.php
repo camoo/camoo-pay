@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace CamooPay\Service;
+namespace CamooPay\Services\Service;
 
 use Maviance\S3PApiClient\ApiClient;
 use Maviance\S3PApiClient\Configuration;

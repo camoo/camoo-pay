@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace CamooPay\Service;
+namespace CamooPay\Services\Verify;
 
 use CamooPay\Http\Client;
 use CamooPay\Http\ResponseInterface;

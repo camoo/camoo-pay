@@ -8,8 +8,8 @@ use CamooPay\Collection\ResponseCollection;
 use CamooPay\Countries\CountryInterface;
 use CamooPay\Exception\CamooPayCashoutException;
 use CamooPay\Jobs\CashoutQuoteJob;
-use CamooPay\Service\CashoutApi;
-use CamooPay\Service\CamooPayServiceLocatorTrait;
+use CamooPay\Services\CashoutApi;
+use CamooPay\Services\CamooPayServiceLocatorTrait;
 use CamooPay\Validators\AllowedNetworkValidation;
 use CamooPay\Validators\PhoneNumberValidation;
 

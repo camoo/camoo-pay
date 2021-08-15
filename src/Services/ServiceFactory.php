@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace CamooPay\Service;
+namespace CamooPay\Services;
 
-use Cake\Core\Configure;
 use CamooPay\Constant\Config;
 use Maviance\S3PApiClient\ApiClient;
 use Maviance\S3PApiClient\Configuration;
@@ -26,9 +25,21 @@ class ServiceFactory
         return new self;
     }
 
+    private function getResourceName(string $serviceName): string
+    {
+        $suffix = substr($serviceName, -3);
+        if ($suffix === 'Api') {
+            return substr($serviceName, 0, -3);
+        }
+
+        return $serviceName;
+    }
+
     public function get(string $serviceName, string $token, string $secret, ?string $model = null, ?string $url = null)
     {
+
         $className = $this->getClassName($serviceName, true);
+
         if ($this->modelExists($className) === false) {
             $className = $this->getClassName($serviceName);
             if ($this->modelExists($className) === false) {
@@ -44,12 +55,14 @@ class ServiceFactory
         return $this->generateObject($className, $client, $config, $model);
     }
 
-    private function getClassName(string $model, bool $fallback = false): string
+    private function getClassName(string $serviceName, bool $fallback = false): string
     {
-        $suffix = substr($model, -3);
-        $apiName = $suffix === 'Api' ? $model : $model . 'Api';
+        $resourceName = $this->getResourceName($serviceName);
+        $apiName = $resourceName . 'Api';
 
-        $nameSpace = $fallback === false ? '\\Maviance\\S3PApiClient\\Service\\' : __NAMESPACE__ . '\\';
+        $resource = $resourceName . '\\';
+
+        $nameSpace = $fallback === false ? '\\Maviance\\S3PApiClient\\Service\\' : __NAMESPACE__ . '\\' . $resource;
         return $nameSpace . $apiName;
     }
 
@@ -63,7 +76,8 @@ class ServiceFactory
         ApiClient     $client,
         Configuration $configuration,
         ?string       $modelName = null
-    ) {
+    )
+    {
         if ($modelName === null) {
             return new $className($client, $configuration);
         }

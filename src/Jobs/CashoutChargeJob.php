@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace CamooPay\Jobs;
 
-use CamooPay\Service\CashoutApi;
-use CamooPay\Service\CamooPayServiceLocatorTrait;
+use CamooPay\Services\CashoutApi;
+use CamooPay\Services\CamooPayServiceLocatorTrait;
 use CamooPay\Validators\ChargeValidation;
 use Throwable;
 
