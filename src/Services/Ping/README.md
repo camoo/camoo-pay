@@ -15,6 +15,12 @@ $response = $healthCheck->check();
 /** @var \Maviance\S3PApiClient\Model\Ping $pingModel */
 $pingModel = $response->firstOrFail();
 $version = $pingModel->getVersion();
+$isAlive = $version === \CamooPay\Constant\Config::API_VERSION;
+if($isAlive === false){
+    // Handle server response
+}
+
+// Get server time
 $time = $pingModel->getTime();
 // or as Array
 $pingData = $response->toArray();
