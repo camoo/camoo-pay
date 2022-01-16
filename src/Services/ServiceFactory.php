@@ -47,8 +47,8 @@ class ServiceFactory
             }
         }
 
-
-        $url = $url ?? Config::API_URL;
+        $apiUrl = $_ENV['SMOBIL_PAY_API_URL'] ?? Config::API_URL;
+        $url = $url ?? $apiUrl;
 
         $client = ApiClientFactory::create($token, $secret);
         $config = ConfigurationFactory::create($url);

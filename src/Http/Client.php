@@ -25,6 +25,7 @@ class Client
     private const POST_REQUEST = 'POST';
     private const GET_REQUEST = 'GET';
 
+
     public function __construct(ApiClient $client, Configuration $config, string $modelName)
     {
         $this->headerSelector = new HeaderSelector();
