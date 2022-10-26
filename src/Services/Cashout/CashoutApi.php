@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Services\Cashout;
 
-use Maviance\S3PApiClient\ApiClient;
-use Maviance\S3PApiClient\Configuration;
 use CamooPay\Http\Client;
 use CamooPay\Http\ResponseInterface;
+use Maviance\S3PApiClient\ApiClient;
+use Maviance\S3PApiClient\Configuration;
 
 class CashoutApi
 {
@@ -26,6 +27,7 @@ class CashoutApi
     public function requestQuote(float $amount, string $paymentId): ResponseInterface
     {
         $data = ['amount' => $amount, 'payItemId' => $paymentId];
+
         return $this->client->post('/quotestd', $data)->getResult();
     }
 

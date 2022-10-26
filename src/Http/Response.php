@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Http;
@@ -7,9 +8,10 @@ use CamooPay\Collection\ResponseCollection;
 
 class Response
 {
-
     private int $code;
+
     private array $headers;
+
     private ResponseCollection $collection;
 
     public function __construct(ResponseCollection $collection, int $code, array $headers)

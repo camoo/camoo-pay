@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Lib;
@@ -8,8 +9,8 @@ use CamooPay\Collection\ResponseCollection;
 use CamooPay\Countries\CountryInterface;
 use CamooPay\Exception\CamooPayCashoutException;
 use CamooPay\Jobs\CashoutQuoteJob;
-use CamooPay\Services\Cashout\CashoutApi;
 use CamooPay\Services\CamooPayServiceLocatorTrait;
+use CamooPay\Services\Cashout\CashoutApi;
 use CamooPay\Validators\AllowedNetworkValidation;
 use CamooPay\Validators\PhoneNumberValidation;
 
@@ -20,9 +21,13 @@ class CashOut
     private const SERVICE_NAME = 'Cashout';
 
     private CashoutApi $cashoutApi;
+
     private string $carrier;
+
     private string $country;
+
     private string $token;
+
     private string $secret;
 
     public function __construct(string $token, string $secret, string $carrier, string $country = 'CM')
@@ -57,15 +62,16 @@ class CashOut
         if ($paymentId === null) {
             throw new CamooPayCashoutException('Payment Id could not be not retrieved !');
         }
+
         return (new CashoutQuoteJob($this->token, $this->secret))
             ->handle($referenceId, $paymentId, $phoneNumber, $amount, $email);
     }
 
-    private function getPaymentId() : ?string
+    private function getPaymentId(): ?string
     {
-        $countryClass = '\\CamooPay\\Countries\\'. $this->country;
+        $countryClass = '\\CamooPay\\Countries\\' . $this->country;
         /** @var CountryInterface $oCountry */
-        $oCountry = new $countryClass;
+        $oCountry = new $countryClass();
         $merchantName = $oCountry->getMerchantNameByCarrier($this->carrier);
 
         /** @var ResponseCollection|\Maviance\S3PApiClient\Model\Cashout[] $providers */
@@ -75,6 +81,7 @@ class CashOut
                 return $provider->getPayItemId();
             }
         }
+
         return null;
     }
 }

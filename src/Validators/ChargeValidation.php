@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Validators;
 
 final class ChargeValidation extends AppValidation
 {
-
     public function isValid(): bool
     {
         $this->validator
@@ -43,6 +43,7 @@ final class ChargeValidation extends AppValidation
             ->scalar('serviceNumber')
             ->requirePresence('serviceNumber')
             ->notEmptyString('serviceNumber');
+
         return $this->validate();
     }
 }

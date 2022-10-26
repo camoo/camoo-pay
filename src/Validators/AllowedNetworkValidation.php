@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Validators;
@@ -8,8 +9,8 @@ use CamooPay\Countries\CountryInterface;
 
 final class AllowedNetworkValidation
 {
-
     private string $carrier;
+
     private string $country;
 
     public function __construct(string $carrier, string $country)
@@ -20,10 +21,11 @@ final class AllowedNetworkValidation
 
     public function isValid(): bool
     {
-        $countryClass = '\\CamooPay\\Countries\\'. $this->country;
+        $countryClass = '\\CamooPay\\Countries\\' . $this->country;
         /** @var CountryInterface $oCountry */
-        $oCountry = new $countryClass;
+        $oCountry = new $countryClass();
         $allowedNetworks = array_keys($oCountry->getMerchants());
+
         return Validation::inList($this->carrier, $allowedNetworks, true);
     }
 }

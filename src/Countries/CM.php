@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Countries;
@@ -19,10 +20,43 @@ class CM implements CountryInterface
         ];
     }
 
-    public function getMerchantNameByCarrier(string $carrier) : string
+    public function getMerchantNameByCarrier(string $carrier): string
     {
         $merchants = $this->getMerchants();
+
         return $merchants[$carrier];
+    }
+
+    public static function isMobile(string $phoneNumber): bool
+    {
+        $phoneUtil = PhoneNumberUtil::getInstance();
+        /** @var PhoneNumber|null $phoneInstance */
+        $phoneInstance = self::getPhoneInstance($phoneNumber, 'CM');
+
+        return null !== $phoneInstance &&
+            $phoneUtil->isValidNumber($phoneInstance) &&
+            !empty($phoneUtil->getNumberType($phoneInstance)) &&
+            $phoneInstance->getCountryCode() === 237;
+    }
+
+    public static function isOrange(string $phoneNumber): bool
+    {
+        $isSNMobile = self::isMobile($phoneNumber);
+        if ($isSNMobile === false) {
+            return false;
+        }
+
+        return (new CM())->getPhoneCarrier(self::getPhoneInstance($phoneNumber, 'CM')) === 'ORANGE';
+    }
+
+    public static function isMTN(string $phoneNumber): bool
+    {
+        $isSNMobile = self::isMobile($phoneNumber);
+        if ($isSNMobile === false) {
+            return false;
+        }
+
+        return (new CM())->getPhoneCarrier(self::getPhoneInstance($phoneNumber, 'CM')) === 'MTN';
     }
 
     private static function getPhoneInstance(string $phoneNumber, ?string $countryCode = null): ?PhoneNumber
@@ -41,37 +75,6 @@ class CM implements CountryInterface
         return $numberProto;
     }
 
-    public static function isMobile(string $phoneNumber): bool
-    {
-        $phoneUtil = PhoneNumberUtil::getInstance();
-        /** @var null|PhoneNumber $phoneInstance */
-        $phoneInstance = self::getPhoneInstance($phoneNumber, 'CM');
-        return null !== $phoneInstance &&
-            $phoneUtil->isValidNumber($phoneInstance) &&
-            !empty($phoneUtil->getNumberType($phoneInstance)) &&
-            $phoneInstance->getCountryCode() === 237;
-    }
-
-    public static function isOrange(string $phoneNumber): bool
-    {
-        $isSNMobile = self::isMobile($phoneNumber);
-        if ($isSNMobile === false) {
-            return false;
-        }
-
-        return (new CM)->getPhoneCarrier(self::getPhoneInstance($phoneNumber, 'CM')) === 'ORANGE';
-    }
-
-    public static function isMTN(string $phoneNumber): bool
-    {
-        $isSNMobile = self::isMobile($phoneNumber);
-        if ($isSNMobile === false) {
-            return false;
-        }
-
-        return (new CM)->getPhoneCarrier(self::getPhoneInstance($phoneNumber, 'CM')) === 'MTN';
-    }
-
     private function getPhoneCarrier(PhoneNumber $phoneInstance): ?string
     {
         $oCarrierMapper = PhoneNumberToCarrierMapper::getInstance();
@@ -80,7 +83,7 @@ class CM implements CountryInterface
             return null;
         }
         $asCarrier = explode(' ', $sCarrier);
+
         return strtoupper($asCarrier[0]);
     }
-
 }
