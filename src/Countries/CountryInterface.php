@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Countries;
@@ -6,5 +7,6 @@ namespace CamooPay\Countries;
 interface CountryInterface
 {
     public function getMerchants(): array;
-    public function getMerchantNameByCarrier(string $carrier) : string;
+
+    public function getMerchantNameByCarrier(string $carrier): string;
 }

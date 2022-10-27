@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Validators;
 
 final class QuoteValidation extends AppValidation
 {
-    public function isValid() : bool
+    public function isValid(): bool
     {
         $this->validator
             ->decimal('amount')
@@ -14,6 +15,7 @@ final class QuoteValidation extends AppValidation
             ->scalar('payItemId')
             ->requirePresence('payItemId')
             ->notEmptyString('payItemId');
+
         return $this->validate();
     }
 }

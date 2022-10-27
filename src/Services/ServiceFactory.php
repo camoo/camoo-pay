@@ -1,43 +1,30 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Services;
 
 use CamooPay\Constant\Config;
-use Maviance\S3PApiClient\ApiClient;
-use Maviance\S3PApiClient\Configuration;
 use CamooPay\Exception\CamooPayMissingServiceException;
 use CamooPay\Http\ApiClientFactory;
 use CamooPay\Http\ConfigurationFactory;
+use Maviance\S3PApiClient\ApiClient;
+use Maviance\S3PApiClient\Configuration;
 
 class ServiceFactory
 {
-
-    /**
-     * Avoid new instance of the factory
-     */
+    /** Avoid new instance of the factory */
     private function __construct()
     {
     }
 
     public static function create(): ServiceFactory
     {
-        return new self;
-    }
-
-    private function getResourceName(string $serviceName): string
-    {
-        $suffix = substr($serviceName, -3);
-        if ($suffix === 'Api') {
-            return substr($serviceName, 0, -3);
-        }
-
-        return $serviceName;
+        return new self();
     }
 
     public function get(string $serviceName, string $token, string $secret, ?string $model = null, ?string $url = null)
     {
-
         $className = $this->getClassName($serviceName, true);
 
         if ($this->modelExists($className) === false) {
@@ -52,7 +39,18 @@ class ServiceFactory
 
         $client = ApiClientFactory::create($token, $secret);
         $config = ConfigurationFactory::create($url);
+
         return $this->generateObject($className, $client, $config, $model);
+    }
+
+    private function getResourceName(string $serviceName): string
+    {
+        $suffix = substr($serviceName, -3);
+        if ($suffix === 'Api') {
+            return substr($serviceName, 0, -3);
+        }
+
+        return $serviceName;
     }
 
     private function getClassName(string $serviceName, bool $fallback = false): string
@@ -63,6 +61,7 @@ class ServiceFactory
         $resource = $resourceName . '\\';
 
         $nameSpace = $fallback === false ? '\\Maviance\\S3PApiClient\\Service\\' : __NAMESPACE__ . '\\' . $resource;
+
         return $nameSpace . $apiName;
     }
 
@@ -72,12 +71,11 @@ class ServiceFactory
     }
 
     private function generateObject(
-        string        $className,
-        ApiClient     $client,
+        string $className,
+        ApiClient $client,
         Configuration $configuration,
-        ?string       $modelName = null
-    )
-    {
+        ?string $modelName = null
+    ) {
         if ($modelName === null) {
             return new $className($client, $configuration);
         }

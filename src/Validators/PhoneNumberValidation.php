@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Validators;
@@ -8,7 +9,6 @@ use CamooPay\Exception\CamooPayException;
 
 final class PhoneNumberValidation
 {
-
     protected array $hMobilNetworksValidation = [
         'CM' => [
             'mtn' => [CM::class, 'isMTN'],
@@ -17,7 +17,9 @@ final class PhoneNumberValidation
     ];
 
     private string $phoneNumber;
+
     private string $carrier;
+
     private string $country;
 
     public function __construct(string $phoneNumber, string $carrier, string $county = 'CM')

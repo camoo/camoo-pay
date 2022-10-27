@@ -1,14 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Collection;
 
 use ArrayIterator;
+use CamooPay\Exception\CamooPayResponseNotFoundException;
+use CamooPay\Http\ResponseInterface;
 use IteratorAggregate;
 use Maviance\S3PApiClient\Model\ModelInterface;
 use Maviance\S3PApiClient\ObjectSerializer;
-use CamooPay\Exception\CamooPayResponseNotFoundException;
-use CamooPay\Http\ResponseInterface;
 use stdClass;
 
 class ResponseCollection implements IteratorAggregate, ResponseInterface
@@ -39,35 +40,37 @@ class ResponseCollection implements IteratorAggregate, ResponseInterface
 
     public function first(): ?ModelInterface
     {
-        if (empty($this->values))
-        {
+        if (empty($this->values)) {
             return null;
         }
+
         return $this->values[0];
     }
 
     public function get(int $position)
     {
-        if(!array_key_exists($position, $this->values)) {
+        if (!array_key_exists($position, $this->values)) {
             return null;
         }
+
         return $this->values[$position];
     }
 
     public function firstOrFail(): ModelInterface
     {
-        if (empty($this->values))
-        {
+        if (empty($this->values)) {
             throw new CamooPayResponseNotFoundException('Entity at position "0" Not found');
         }
+
         return $this->values[0];
     }
 
     public function getOrFail(int $position): ModelInterface
     {
-        if(!array_key_exists($position, $this->values)) {
+        if (!array_key_exists($position, $this->values)) {
             throw new CamooPayResponseNotFoundException(sprintf('Entity at position "%d" Not found', $position));
         }
+
         return $this->values[$position];
     }
 

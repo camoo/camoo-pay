@@ -9,7 +9,7 @@ use CamooPay\Services\Cashout\CashoutApi;
 use Maviance\S3PApiClient\Model\Quote;
 use Throwable;
 
-class CashoutQuoteJob
+final class BillQuoteJob
 {
     use CamooPayServiceLocatorTrait;
 
@@ -36,7 +36,8 @@ class CashoutQuoteJob
         string $paymentId,
         string $phoneNumber,
         float $amount,
-        string $email
+        string $email,
+        string $serviceNumber
     ): ?array {
         try {
             $result = $this->cashoutApi->requestQuote($amount, $paymentId);
@@ -44,8 +45,8 @@ class CashoutQuoteJob
             $entity = $result->first();
             $quoteId = $entity->getQuoteId();
 
-            $collector = new CashoutChargeJob($this->token, $this->secret);
-            $chargeResult = $collector->handle($referenceId, $quoteId, $phoneNumber, $email);
+            $collector = new PayBillJob($this->token, $this->secret);
+            $chargeResult = $collector->handle($referenceId, $quoteId, $phoneNumber, $email, $serviceNumber);
         } catch (Throwable $exception) {
             echo $exception->getMessage();
 

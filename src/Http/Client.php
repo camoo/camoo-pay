@@ -1,9 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Http;
 
+use CamooPay\Collection\ResponseCollection;
 use CamooPay\Constant\Config;
+use CamooPay\Exception\CamooPayException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
@@ -12,19 +15,21 @@ use Maviance\S3PApiClient\ApiException;
 use Maviance\S3PApiClient\Configuration;
 use Maviance\S3PApiClient\HeaderSelector;
 use Maviance\S3PApiClient\ObjectSerializer;
-use CamooPay\Collection\ResponseCollection;
-use CamooPay\Exception\CamooPayException;
 use stdClass;
 
 class Client
 {
-    private Configuration $config;
-    protected HeaderSelector $headerSelector;
-    private ApiClient $client;
-    private string $modelName;
     private const POST_REQUEST = 'POST';
+
     private const GET_REQUEST = 'GET';
 
+    protected HeaderSelector $headerSelector;
+
+    private Configuration $config;
+
+    private ApiClient $client;
+
+    private string $modelName;
 
     public function __construct(ApiClient $client, Configuration $config, string $modelName)
     {
@@ -34,9 +39,14 @@ class Client
         $this->modelName = $modelName;
     }
 
-    private function getReturnType(): string
+    public function post(string $url, array $data = []): Response
     {
-        return $this->modelName !== 'object' ? '\Maviance\S3PApiClient\Model\\' . $this->modelName : 'object';
+        return $this->sendRequest(self::POST_REQUEST, $url, $data);
+    }
+
+    public function get(string $url, array $data = []): Response
+    {
+        return $this->sendRequest(self::GET_REQUEST, $url, $data);
     }
 
     protected function getRequest(string $type, string $resourcePath, array $data = [], ?string $xApiVersion = null): Request
@@ -46,7 +56,6 @@ class Client
         $httpBody = '';
 
         $headerParams['x-api-version'] = ObjectSerializer::toHeaderValue($xApiVersion);
-
 
         $headers = $this->headerSelector->selectHeaders(
             ['application/json'],
@@ -76,9 +85,10 @@ class Client
         );
 
         $query = http_build_query($queryParams);
+
         return new Request(
             $type,
-            $this->config->getHost() . $resourcePath . ($query ? "?$query" : ''),
+            $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
         );
@@ -124,6 +134,7 @@ class Client
                 $content = json_decode($content);
             }
             $contentResponse = is_object($content) ? [$content] : $content;
+
             return new Response(
                 ResponseCollection::create($contentResponse, $returnType),
                 $response->getStatusCode(),
@@ -134,19 +145,6 @@ class Client
         }
     }
 
-    public function post(string $url, array $data = []): Response
-    {
-        return $this->sendRequest(self::POST_REQUEST, $url, $data);
-    }
-
-    public function get(string $url, array $data = []): Response
-    {
-        return $this->sendRequest(self::GET_REQUEST, $url, $data);
-    }
-
-    /**
-     * @return array
-     */
     protected function createHttpClientOption(): array
     {
         $options = [];
@@ -158,5 +156,10 @@ class Client
         }
 
         return $options;
+    }
+
+    private function getReturnType(): string
+    {
+        return $this->modelName !== 'object' ? '\Maviance\S3PApiClient\Model\\' . $this->modelName : 'object';
     }
 }

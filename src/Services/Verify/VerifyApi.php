@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CamooPay\Services\Verify;
@@ -18,7 +19,7 @@ class VerifyApi
         $this->client = new Client($client, $config, $model);
     }
 
-    public function verify(string $transactionNumber) : ResponseInterface
+    public function verify(string $transactionNumber): ResponseInterface
     {
         return $this->client->get('/verifytx', ['ptn' => $transactionNumber])->getResult();
     }
