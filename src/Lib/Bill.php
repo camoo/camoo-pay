@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CamooPay\Lib;
 
-use Cake\Utility\Text;
 use CamooPay\Exception\CamooPayCashoutException;
 use CamooPay\Http\ResponseInterface;
 use CamooPay\Jobs\BillQuoteJob;
@@ -33,27 +32,27 @@ final class Bill
         $this->secret = $secret;
     }
 
-    public function pay(string $serviceNumber, string $merchant, int $serviceId, float $amount, string $email): ?array
-    {
-        $handler = $this->getHandler($serviceNumber, $merchant, $serviceId);
-
-        /** @var \Maviance\S3PApiClient\Model\Bill|null $details */
-        $details = $handler->first();
-        if (null === $details) {
-            return null;
-        }
-        $paymentId = $details->getPayItemId();
-        $referenceId = Text::uuid();
+    public function pay(
+        \Maviance\S3PApiClient\Model\Bill $bill,
+        string $referenceId,
+        string $phoneNumber,
+        string $email
+    ): ?array {
+        $paymentId = $bill->getPayItemId();
+        $serviceNumber = $bill->getServiceNumber();
+        /*$merchant = $bill->getMerchant();
+        $serviceId = $bill->getServiceid();*/
+        $amount = $bill->getAmountLocalCur() + $bill->getPenaltyAmount();
 
         if ($paymentId === null) {
             throw new CamooPayCashoutException('Payment Id could not be not retrieved !');
         }
 
         return (new BillQuoteJob($this->token, $this->secret))
-            ->handle($referenceId, $paymentId, $phoneNumber, $amount, $email);
+            ->handle($referenceId, $paymentId, $phoneNumber, $amount, $email, $serviceNumber);
     }
 
-    private function getHandler(string $serviceNumber, string $merchant, int $serviceId): ResponseInterface
+    public function getHandler(string $serviceNumber, string $merchant, int $serviceId): ResponseInterface
     {
         return $this->billApi->get($serviceNumber, $merchant, $serviceId);
     }
