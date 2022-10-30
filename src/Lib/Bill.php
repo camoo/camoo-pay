@@ -9,6 +9,7 @@ use CamooPay\Http\ResponseInterface;
 use CamooPay\Jobs\BillQuoteJob;
 use CamooPay\Services\Bill\BillApi;
 use CamooPay\Services\CamooPayServiceLocatorTrait;
+use Maviance\S3PApiClient\Model\Bill as BillEntity;
 
 final class Bill
 {
@@ -33,7 +34,7 @@ final class Bill
     }
 
     public function pay(
-        \Maviance\S3PApiClient\Model\Bill $bill,
+        BillEntity $bill,
         string $referenceId,
         string $phoneNumber,
         string $email
