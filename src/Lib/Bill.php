@@ -10,6 +10,7 @@ use CamooPay\Jobs\BillQuoteJob;
 use CamooPay\Services\Bill\BillApi;
 use CamooPay\Services\CamooPayServiceLocatorTrait;
 use Maviance\S3PApiClient\Model\Bill as BillEntity;
+use Maviance\S3PApiClient\Model\CollectionResponse;
 
 final class Bill
 {
@@ -30,7 +31,7 @@ final class Bill
         $this->secret = $secret;
     }
 
-    public function pay(BillEntity $bill, string $referenceId, string $phoneNumber, string $email): ?array
+    public function pay(BillEntity $bill, string $referenceId, string $phoneNumber, string $email): ?CollectionResponse
     {
         $paymentId = $bill->getPayItemId();
         $serviceNumber = $bill->getServiceNumber();
