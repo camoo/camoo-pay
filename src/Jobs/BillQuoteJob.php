@@ -6,6 +6,7 @@ namespace CamooPay\Jobs;
 
 use CamooPay\Services\CamooPayServiceLocatorTrait;
 use CamooPay\Services\Cashout\CashoutApi;
+use Maviance\S3PApiClient\Model\CollectionResponse;
 use Maviance\S3PApiClient\Model\Quote;
 use Throwable;
 
@@ -38,7 +39,7 @@ final class BillQuoteJob
         float $amount,
         string $email,
         string $serviceNumber
-    ): ?array {
+    ): ?CollectionResponse {
         try {
             $result = $this->cashoutApi->requestQuote($amount, $paymentId);
             /** @var Quote $entity */

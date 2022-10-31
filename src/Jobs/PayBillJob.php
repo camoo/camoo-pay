@@ -7,6 +7,7 @@ namespace CamooPay\Jobs;
 use CamooPay\Services\Bill\BillApi;
 use CamooPay\Services\CamooPayServiceLocatorTrait;
 use CamooPay\Validators\ChargeValidation;
+use Maviance\S3PApiClient\Model\CollectionResponse;
 use Throwable;
 
 class PayBillJob
@@ -30,10 +31,10 @@ class PayBillJob
         string $phoneNumber,
         string $email,
         string $serviceNumber
-    ): ?array {
+    ): ?CollectionResponse {
         try {
-            $phoneNumber = !preg_match('/^(237)\s*/', $phoneNumber) ? '237' . $this->_cleanPone($phoneNumber) :
-                $this->_cleanPone($phoneNumber);
+            $phoneNumber = !preg_match('/^(237)\s*/', $phoneNumber) ? '237' . $this->cleanUpNumber($phoneNumber) :
+                $this->cleanUpNumber($phoneNumber);
             $charge = [
                 'quoteId' => $quoteId,
                 'customerPhonenumber' => $phoneNumber,
@@ -48,7 +49,7 @@ class PayBillJob
 
             $collection = $this->billApi->applyPay($charge);
 
-            return $collection->toArray();
+            return $collection->first();
         } catch (Throwable $exception) {
             echo $exception->getMessage();
         }
@@ -56,7 +57,7 @@ class PayBillJob
         return null;
     }
 
-    private function _cleanPone($xTel)
+    private function cleanUpNumber($xTel): ?string
     {
         if (empty($xTel)) {
             return null;

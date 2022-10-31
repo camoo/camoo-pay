@@ -23,7 +23,8 @@
         "php": ">=7.4",
         "maviance/smobilpay-php": "^0.0.6",
         "cakephp/validation": "^4.2",
-        "giggsey/libphonenumber-for-php": "^8.12"
+        "giggsey/libphonenumber-for-php": "^8.12",
+        "ext-json": "*"
     },
 
     "autoload": {

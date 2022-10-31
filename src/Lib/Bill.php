@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace CamooPay\Lib;
 
-use Cake\Utility\Text;
 use CamooPay\Exception\CamooPayCashoutException;
 use CamooPay\Http\ResponseInterface;
 use CamooPay\Jobs\BillQuoteJob;
 use CamooPay\Services\Bill\BillApi;
 use CamooPay\Services\CamooPayServiceLocatorTrait;
+use Maviance\S3PApiClient\Model\Bill as BillEntity;
+use Maviance\S3PApiClient\Model\CollectionResponse;
 
 final class Bill
 {
@@ -19,41 +20,32 @@ final class Bill
 
     private BillApi $billApi;
 
-    private string $country;
-
     private string $token;
 
     private string $secret;
 
-    public function __construct(string $token, string $secret, string $country = 'CM')
+    public function __construct(string $token, string $secret)
     {
         $this->billApi = $this->getCamooPayLocator()->get(self::SERVICE_NAME, $token, $secret);
-        $this->country = $country;
         $this->token = $token;
         $this->secret = $secret;
     }
 
-    public function pay(string $serviceNumber, string $merchant, int $serviceId, float $amount, string $email): ?array
+    public function pay(BillEntity $bill, string $referenceId, string $phoneNumber, string $email): ?CollectionResponse
     {
-        $handler = $this->getHandler($serviceNumber, $merchant, $serviceId);
-
-        /** @var \Maviance\S3PApiClient\Model\Bill|null $details */
-        $details = $handler->first();
-        if (null === $details) {
-            return null;
-        }
-        $paymentId = $details->getPayItemId();
-        $referenceId = Text::uuid();
+        $paymentId = $bill->getPayItemId();
+        $serviceNumber = $bill->getServiceNumber();
+        $amount = $bill->getAmountLocalCur() + $bill->getPenaltyAmount();
 
         if ($paymentId === null) {
             throw new CamooPayCashoutException('Payment Id could not be not retrieved !');
         }
 
         return (new BillQuoteJob($this->token, $this->secret))
-            ->handle($referenceId, $paymentId, $phoneNumber, $amount, $email);
+            ->handle($referenceId, $paymentId, $phoneNumber, $amount, $email, $serviceNumber);
     }
 
-    private function getHandler(string $serviceNumber, string $merchant, int $serviceId): ResponseInterface
+    public function getHandler(string $serviceNumber, string $merchant, int $serviceId): ResponseInterface
     {
         return $this->billApi->get($serviceNumber, $merchant, $serviceId);
     }
