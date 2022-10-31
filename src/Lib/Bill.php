@@ -19,30 +19,21 @@ final class Bill
 
     private BillApi $billApi;
 
-    private string $country;
-
     private string $token;
 
     private string $secret;
 
-    public function __construct(string $token, string $secret, string $country = 'CM')
+    public function __construct(string $token, string $secret)
     {
         $this->billApi = $this->getCamooPayLocator()->get(self::SERVICE_NAME, $token, $secret);
-        $this->country = $country;
         $this->token = $token;
         $this->secret = $secret;
     }
 
-    public function pay(
-        BillEntity $bill,
-        string $referenceId,
-        string $phoneNumber,
-        string $email
-    ): ?array {
+    public function pay(BillEntity $bill, string $referenceId, string $phoneNumber, string $email): ?array
+    {
         $paymentId = $bill->getPayItemId();
         $serviceNumber = $bill->getServiceNumber();
-        /*$merchant = $bill->getMerchant();
-        $serviceId = $bill->getServiceid();*/
         $amount = $bill->getAmountLocalCur() + $bill->getPenaltyAmount();
 
         if ($paymentId === null) {

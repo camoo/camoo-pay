@@ -20,5 +20,6 @@ interface ResponseInterface
 
     public function count(): int;
 
+    /** @return array|ModelInterface[<T>] */
     public function toArray(): array;
 }

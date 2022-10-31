@@ -49,8 +49,12 @@ class Client
         return $this->sendRequest(self::GET_REQUEST, $url, $data);
     }
 
-    protected function getRequest(string $type, string $resourcePath, array $data = [], ?string $xApiVersion = null): Request
-    {
+    protected function getRequest(
+        string $type,
+        string $resourcePath,
+        array $data = [],
+        ?string $xApiVersion = null
+    ): Request {
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
@@ -94,8 +98,12 @@ class Client
         );
     }
 
-    protected function sendRequest(string $type, string $resourcePath, array $data = [], ?string $xApiVersion = null): Response
-    {
+    protected function sendRequest(
+        string $type,
+        string $resourcePath,
+        array $data = [],
+        ?string $xApiVersion = null
+    ): Response {
         $returnType = $this->getReturnType();
         $xApiVersion = $xApiVersion ?? Config::API_VERSION;
         $request = $this->getRequest($type, $resourcePath, $data, $xApiVersion);
@@ -129,7 +137,9 @@ class Client
             }
 
             $responseBody = $response->getBody();
+
             $content = $responseBody->getContents();
+
             if (!in_array($returnType, ['string', 'integer', 'bool'])) {
                 $content = json_decode($content);
             }
@@ -160,6 +170,6 @@ class Client
 
     private function getReturnType(): string
     {
-        return $this->modelName !== 'object' ? '\Maviance\S3PApiClient\Model\\' . $this->modelName : 'object';
+        return $this->modelName !== 'object' ? '\\Maviance\\S3PApiClient\Model\\' . $this->modelName : 'object';
     }
 }

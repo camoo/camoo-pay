@@ -84,6 +84,7 @@ class ResponseCollection implements IteratorAggregate, ResponseInterface
         return count($this->values);
     }
 
+    /** @return array|ModelInterface[] */
     public function toArray(): array
     {
         return $this->values;
