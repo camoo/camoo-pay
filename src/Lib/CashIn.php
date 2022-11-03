@@ -8,7 +8,7 @@ use Cake\Utility\Text;
 use CamooPay\Collection\ResponseCollection;
 use CamooPay\Countries\CountryFactory;
 use CamooPay\Countries\CountryInterface;
-use CamooPay\Exception\CamooPayCashoutException;
+use CamooPay\Exception\CamooPayCashInException;
 use CamooPay\Jobs\CashInQuoteJob;
 use CamooPay\Services\CamooPayServiceLocatorTrait;
 use CamooPay\Services\CashIn\CashinApi;
@@ -37,7 +37,7 @@ final class CashIn
         $allowedValidation = new AllowedNetworkValidation($this->carrier, $this->country);
 
         if ($allowedValidation->isValid() === false) {
-            throw new CamooPayCashoutException(sprintf(
+            throw new CamooPayCashInException(sprintf(
                 'Carrier %s is not allowed for country %s',
                 $this->carrier,
                 $this->country
@@ -46,14 +46,14 @@ final class CashIn
 
         $phoneNumberValidation = new PhoneNumberValidation($phoneNumber, $this->carrier);
         if ($phoneNumberValidation->isValid() === false) {
-            throw new CamooPayCashoutException('Invalid phone number');
+            throw new CamooPayCashInException('Invalid phone number');
         }
 
         $paymentId = $this->getPaymentId();
         $referenceId = Text::uuid();
 
         if ($paymentId === null) {
-            throw new CamooPayCashoutException('Payment Id could not be not retrieved !');
+            throw new CamooPayCashInException('Payment Id could not be not retrieved !');
         }
 
         return (new CashInQuoteJob($this->token, $this->secret))
