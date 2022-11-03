@@ -68,7 +68,7 @@ class CM implements CountryInterface
         $phoneUtil = PhoneNumberUtil::getInstance();
         try {
             $numberProto = $phoneUtil->parse($phoneNumber, $countryCode);
-        } catch (NumberParseException $exception) {
+        } catch (NumberParseException) {
             return null;
         }
 

@@ -9,19 +9,19 @@ use CamooPay\Collection\ResponseCollection;
 use CamooPay\Countries\CountryFactory;
 use CamooPay\Countries\CountryInterface;
 use CamooPay\Exception\CamooPayCashoutException;
-use CamooPay\Jobs\CashoutQuoteJob;
+use CamooPay\Jobs\CashInQuoteJob;
 use CamooPay\Services\CamooPayServiceLocatorTrait;
-use CamooPay\Services\Cashout\CashoutApi;
+use CamooPay\Services\CashIn\CashinApi;
 use CamooPay\Validators\AllowedNetworkValidation;
 use CamooPay\Validators\PhoneNumberValidation;
 
-class CashOut
+final class CashIn
 {
     use CamooPayServiceLocatorTrait;
 
-    private const SERVICE_NAME = 'Cashout';
+    private const SERVICE_NAME = 'Cashin';
 
-    private CashoutApi $cashoutApi;
+    private CashinApi $cashInApi;
 
     public function __construct(
         private string $token,
@@ -29,10 +29,10 @@ class CashOut
         private string $carrier,
         private string $country = CountryInterface::CM
     ) {
-        $this->cashoutApi = $this->getCamooPayLocator()->get(self::SERVICE_NAME, $token, $secret);
+        $this->cashInApi = $this->getCamooPayLocator()->get(self::SERVICE_NAME, $token, $secret);
     }
 
-    public function charge(string $phoneNumber, float $amount, string $email): ?array
+    public function send(string $phoneNumber, float $amount, string $email): ?array
     {
         $allowedValidation = new AllowedNetworkValidation($this->carrier, $this->country);
 
@@ -56,20 +56,18 @@ class CashOut
             throw new CamooPayCashoutException('Payment Id could not be not retrieved !');
         }
 
-        return (new CashoutQuoteJob($this->token, $this->secret))
+        return (new CashInQuoteJob($this->token, $this->secret))
             ->handle($referenceId, $paymentId, $phoneNumber, $amount, $email);
     }
 
     private function getPaymentId(): ?string
     {
-        $oCountry = CountryFactory::getInstance($this->country);
-        if (!$oCountry instanceof CountryInterface) {
-            return null;
-        }
-        $merchantName = $oCountry->getMerchantNameByCarrier($this->carrier);
+        $country = CountryFactory::getInstance($this->country);
+
+        $merchantName = $country->getMerchantNameByCarrier($this->carrier);
 
         /** @var ResponseCollection|\Maviance\S3PApiClient\Model\Cashout[] $providers */
-        $providers = $this->cashoutApi->getProviders();
+        $providers = $this->cashInApi->getProviders();
         foreach ($providers as $provider) {
             if ($provider->getMerchant() === $merchantName) {
                 return $provider->getPayItemId();
