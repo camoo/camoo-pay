@@ -38,7 +38,7 @@ class CashInQuoteJob
             $entity = $result->first();
             $quoteId = $entity->getQuoteId();
 
-            $collector = new CashoutChargeJob($this->token, $this->secret);
+            $collector = new CashInChargeJob($this->token, $this->secret);
             $chargeResult = $collector->handle($referenceId, $quoteId, $phoneNumber, $email);
         } catch (Throwable $exception) {
             echo $exception->getMessage();

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CamooPay\Lib;
 
-use CamooPay\Exception\CamooPayCashoutException;
+use CamooPay\Exception\CamooPayBillException;
 use CamooPay\Http\ResponseInterface;
 use CamooPay\Jobs\BillQuoteJob;
 use CamooPay\Services\Bill\BillApi;
@@ -38,7 +38,7 @@ final class Bill
         $amount = $bill->getAmountLocalCur() + $bill->getPenaltyAmount();
 
         if ($paymentId === null) {
-            throw new CamooPayCashoutException('Payment Id could not be not retrieved !');
+            throw new CamooPayBillException('Payment Id could not be not retrieved !');
         }
 
         return (new BillQuoteJob($this->token, $this->secret))
