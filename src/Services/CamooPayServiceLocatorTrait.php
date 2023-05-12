@@ -11,9 +11,7 @@ namespace CamooPay\Services;
  */
 trait CamooPayServiceLocatorTrait
 {
-    /**
-     * gets adapter factory
-     */
+    /** gets adapter factory */
     public function getCamooPayLocator(): ServiceFactory
     {
         return ServiceFactory::create();
