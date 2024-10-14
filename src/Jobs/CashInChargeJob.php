@@ -19,7 +19,7 @@ class CashInChargeJob
 
     private CashinApi $cashInApi;
 
-    public function __construct(private string $token, private string $secret)
+    public function __construct(private readonly string $token, private readonly string $secret)
     {
         $this->cashInApi = $this->getCamooPayLocator()->get(self::SERVICE_NAME, $token, $secret, self::MODEL_NAME);
     }
@@ -42,9 +42,7 @@ class CashInChargeJob
                 return null;
             }
 
-            $collection = $this->cashInApi->requestCharge($charge);
-
-            return $collection->toArray();
+            return $this->cashInApi->requestCharge($charge)->toArray();
         } catch (Throwable $exception) {
             echo $exception->getMessage();
         }
