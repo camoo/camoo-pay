@@ -14,8 +14,8 @@ class CM implements CountryInterface
     public function getMerchants(): array
     {
         return [
-            'mtn' => 'MTNMOMO',
-            'orange' => 'CMORANGEOM',
+            'mtn' => 'CMMTNMOMOCC',
+            'orange' => 'CMORANGEOMCC',
             'expressU' => 'EUCASHOUT',
         ];
     }
